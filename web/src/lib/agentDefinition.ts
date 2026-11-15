@@ -10,7 +10,7 @@ export type ClientToolName = (typeof CLIENT_TOOL_NAMES)[number];
 export const AGENT_NAME = "Leash";
 export const AGENT_LLM = "claude-sonnet-5-5";
 export const AGENT_VOICE_ID = "cjVigY5qzO86Huf0OWal";
-export const AGENT_TTS_MODEL = "eleven_flash_v2_5";
+export const AGENT_TTS_MODEL = "eleven_flash_v2";
 
 export const FIRST_MESSAGE =
   "Leash here. I can look up prediction markets and bet from your vault, within the limits you set. What are you thinking?";

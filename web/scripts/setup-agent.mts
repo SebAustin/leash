@@ -3,6 +3,7 @@
  *   cd web && node --env-file=.env.local scripts/setup-agent.mts
  * Prints the agent id to put in .env.local as ELEVENLABS_AGENT_ID.
  */
+import { readFileSync, writeFileSync } from "node:fs";
 import {
   AGENT_LLM,
   AGENT_NAME,
@@ -74,5 +75,8 @@ if (agentId) {
 } else {
   const created = await call<{ agent_id: string }>("POST", "/agents/create", body);
   console.log(`created agent ${created.agent_id}`);
-  console.log(`add to .env.local:  ELEVENLABS_AGENT_ID=${created.agent_id}`);
+  const envPath = new URL("../.env.local", import.meta.url);
+  const current = readFileSync(envPath, "utf8").split("\n").filter((l) => !l.startsWith("ELEVENLABS_AGENT_ID="));
+  writeFileSync(envPath, [...current.filter((l, i) => l || i < current.length - 1), `ELEVENLABS_AGENT_ID=${created.agent_id}`, ""].join("\n"));
+  console.log("saved ELEVENLABS_AGENT_ID to .env.local");
 }
