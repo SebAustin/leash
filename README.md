@@ -17,8 +17,8 @@ Work in progress (hackathon week, Nov 13–20, 2026).
 - [x] `LeashVault` contract + Foundry test suite
 - [x] Deploy to Arc testnet
 - [x] Agent server tools (Gemini markets, vault spend, owner-approval execution)
-- [ ] ElevenLabs voice agent + UI
-- [ ] Owner approval flow
+- [x] ElevenLabs voice agent + one-screen console (needs an ElevenLabs key to go live)
+- [x] Owner approval flow (MetaMask EIP-712) and pause switch
 - [ ] QuickNode Stream → activity feed
 
 ## Safety limits (enforced onchain)
@@ -50,8 +50,30 @@ Gemini orders are placed only after that transaction confirms (authorize-then-ex
 
 ```
 contracts/   Foundry project: LeashVault.sol, tests, deploy script
-web/         Next.js app: agent server tools (src/lib, src/app/api) and, next, the voice UI
+web/         Next.js app: voice console, agent tools (src/lib, src/app/api), ElevenLabs setup script
 ```
+
+## Voice agent
+
+The agent runs on ElevenLabs Agents with Claude Sonnet 5.5 as the LLM. Its prompt, voice and
+tools live in `web/src/lib/agentDefinition.ts`; `pnpm setup:agent` creates or updates it.
+
+```bash
+cd web
+# put ELEVENLABS_API_KEY in .env.local, then:
+pnpm setup:agent            # prints ELEVENLABS_AGENT_ID=... to add to .env.local
+pnpm dev                    # open http://localhost:3000 and press "Talk to Leash"
+```
+
+The agent is private: the page asks our server for a short-lived WebRTC token
+(`/api/conversation-token`), so the ElevenLabs key never reaches the browser.
+
+Its four tools are **client tools** that run in the page: `listMarkets`, `getBudget`,
+`placeBet` and `requestOwnerApproval`. The first three call the same-origin `/api/agent/*`
+routes. When a bet needs the owner, the page keeps the approval request and gives the agent
+only an `approvalId`. `requestOwnerApproval` then opens MetaMask on that stored request, so the
+agent cannot change the amount you are asked to sign. The page header has the owner's
+**Pause agent** switch, which calls `pause()` from MetaMask.
 
 ## Agent server tools
 

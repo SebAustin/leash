@@ -10,67 +10,7 @@ import {
 import { privateKeyToAccount } from "viem/accounts";
 import type { ServerConfig } from "./config";
 import type { ToolDeps } from "./tools";
-
-export const leashVaultAbi = [
-  {
-    type: "function",
-    name: "limits",
-    stateMutability: "view",
-    inputs: [],
-    outputs: [
-      { name: "autoApproveMax", type: "uint256" },
-      { name: "perTradeCap", type: "uint256" },
-      { name: "dailyBudget", type: "uint256" },
-    ],
-  },
-  { type: "function", name: "remainingDailyBudget", stateMutability: "view", inputs: [], outputs: [{ type: "uint256" }] },
-  { type: "function", name: "paused", stateMutability: "view", inputs: [], outputs: [{ type: "bool" }] },
-  { type: "function", name: "approvalNonce", stateMutability: "view", inputs: [], outputs: [{ type: "uint256" }] },
-  {
-    type: "function",
-    name: "spend",
-    stateMutability: "nonpayable",
-    inputs: [
-      { name: "market", type: "string" },
-      { name: "outcomeYes", type: "bool" },
-      { name: "amount", type: "uint256" },
-    ],
-    outputs: [{ name: "positionId", type: "uint256" }],
-  },
-  {
-    type: "function",
-    name: "spendWithApproval",
-    stateMutability: "nonpayable",
-    inputs: [
-      { name: "market", type: "string" },
-      { name: "outcomeYes", type: "bool" },
-      { name: "amount", type: "uint256" },
-      { name: "deadline", type: "uint256" },
-      { name: "ownerSig", type: "bytes" },
-    ],
-    outputs: [{ name: "positionId", type: "uint256" }],
-  },
-  {
-    type: "event",
-    name: "PositionAuthorized",
-    inputs: [
-      { name: "positionId", type: "uint256", indexed: true },
-      { name: "broker", type: "address", indexed: true },
-      { name: "market", type: "string", indexed: false },
-      { name: "outcomeYes", type: "bool", indexed: false },
-      { name: "amount", type: "uint256", indexed: false },
-      { name: "ownerApproved", type: "bool", indexed: false },
-    ],
-  },
-  { type: "error", name: "NotAgent", inputs: [] },
-  { type: "error", name: "VaultPaused", inputs: [] },
-  { type: "error", name: "ZeroAmount", inputs: [] },
-  { type: "error", name: "InvalidOwnerSignature", inputs: [] },
-  { type: "error", name: "ApprovalExpired", inputs: [{ name: "deadline", type: "uint256" }] },
-  { type: "error", name: "NeedsOwnerApproval", inputs: [{ name: "amount", type: "uint256" }, { name: "autoApproveMax", type: "uint256" }] },
-  { type: "error", name: "OverPerTradeCap", inputs: [{ name: "amount", type: "uint256" }, { name: "perTradeCap", type: "uint256" }] },
-  { type: "error", name: "OverDailyBudget", inputs: [{ name: "amount", type: "uint256" }, { name: "remaining", type: "uint256" }] },
-] as const;
+import { leashVaultAbi } from "./abi";
 
 const erc20BalanceAbi = [
   { type: "function", name: "balanceOf", stateMutability: "view", inputs: [{ type: "address" }], outputs: [{ type: "uint256" }] },

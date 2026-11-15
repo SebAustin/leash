@@ -7,9 +7,11 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "vitest run"
+    "test": "vitest run",
+    "setup:agent": "node --env-file=.env.local scripts/setup-agent.mts"
   },
   "dependencies": {
+    "@elevenlabs/react": "1.22.1",
     "next": "16.4.6",
     "react": "19.3.0",
     "react-dom": "19.3.0",
