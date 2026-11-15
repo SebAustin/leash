@@ -16,7 +16,7 @@ Work in progress (hackathon week, Nov 13–20, 2026).
 
 - [x] `LeashVault` contract + Foundry test suite
 - [x] Deploy to Arc testnet
-- [ ] Agent server tools (Gemini sandbox, vault spend)
+- [x] Agent server tools (Gemini markets, vault spend, owner-approval execution)
 - [ ] ElevenLabs voice agent + UI
 - [ ] Owner approval flow
 - [ ] QuickNode Stream → activity feed
@@ -50,6 +50,37 @@ Gemini orders are placed only after that transaction confirms (authorize-then-ex
 
 ```
 contracts/   Foundry project: LeashVault.sol, tests, deploy script
+web/         Next.js app: agent server tools (src/lib, src/app/api) and, next, the voice UI
+```
+
+## Agent server tools
+
+ElevenLabs calls these as server tools: `POST /api/tools/<name>` with a JSON body and an
+`x-leash-secret` header (`TOOL_SECRET`).
+
+| Tool | Body | Returns |
+|---|---|---|
+| `list-markets` | `{ category?, search?, limit? }` | open Gemini contracts with yes/no prices |
+| `get-budget` | `{}` | limits, today's remaining budget, vault balance, paused |
+| `place-bet` | `{ symbol, side: "yes"\|"no", amountUsd }` | `placed`, `needs_approval` (EIP-712 request for the owner) or `rejected` with a spoken reason |
+
+`POST /api/approvals` takes the owner's MetaMask signature for a `needs_approval` request and
+executes it via `spendWithApproval`. It needs no shared secret: the vault itself rejects any
+signature that doesn't recover to the owner.
+
+Decision loop for one bet: fetch a fresh price → size the order in 0.01-contract lots →
+predict the vault's path with the same rules as the contract (`src/lib/policy.ts`) → reject,
+ask for the owner's signature, or simulate and send `spend` → wait for `PositionAuthorized` →
+only then place the Gemini order.
+
+Market data comes from Gemini's public production API (the sandbox books are empty); orders go
+to the sandbox when `GEMINI_API_KEY`/`GEMINI_API_SECRET` are set. Without keys, or if the
+sandbox rejects a production symbol, the fill is returned as `simulated: true` with the reason.
+
+```bash
+cd web
+ln -s ../.env.local .env.local   # once
+pnpm install && pnpm test && pnpm dev
 ```
 
 ## Contracts
