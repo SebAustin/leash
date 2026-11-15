@@ -15,7 +15,7 @@ over the cap is rejected by the contract itself.
 Work in progress (hackathon week, Nov 13–20, 2026).
 
 - [x] `LeashVault` contract + Foundry test suite
-- [ ] Deploy to Arc testnet
+- [x] Deploy to Arc testnet
 - [ ] Agent server tools (Gemini sandbox, vault spend)
 - [ ] ElevenLabs voice agent + UI
 - [ ] Owner approval flow
@@ -72,4 +72,4 @@ Arc's minimum base fee is 20 gwei; transactions priced below it are dropped with
 
 | Contract | Arc testnet address |
 |---|---|
-| LeashVault | _not deployed yet_ |
+| LeashVault | [`0x0D2D3434c50B7df9D368504D9CdC664Da3D24E74`](https://explorer.testnet.arc.io/address/0x0D2D3434c50B7df9D368504D9CdC664Da3D24E74) |
